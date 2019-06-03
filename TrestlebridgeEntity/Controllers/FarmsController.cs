@@ -17,7 +17,7 @@ namespace TrestlebridgeEntity.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        private Task<ApplicationUser> GetCurrentUserAsync() => 
+        private Task<ApplicationUser> GetCurrentUserAsync() =>
             _userManager.GetUserAsync(HttpContext.User);
 
 
@@ -33,33 +33,14 @@ namespace TrestlebridgeEntity.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
+            var farms = _context.Farms
+                .Include("Facilities")
+                .Include("Facilities.Type")
+                .Include("Facilities.Animals")
+                .Where(f => f.User == user)
+        ;
 
-            //var facilitiesFromSQL = _context.Facilities.FromSql(@"
-            //    select f.RegisteredName, count(f.Id) NumberOfFaciities
-            //    from Farms f
-            //    join Facilities fc on fc.FarmId = f.Id
-            //    group by f.RegisteredName
-            //").ToList();
-
-            var facilityCount = (from facility in _context.Facilities
-                    group facility by new {
-                        facility.FarmId,
-                        facility.Farm.RegisteredName,
-                        facility.Farm.Acres,
-                        facility.Farm.User
-                    }
-                    into farmGroup
-                    where farmGroup.Key.User == user
-                    select new GroupedFarm
-                    {
-                        FarmId = farmGroup.Key.FarmId,
-                        RegisteredName = farmGroup.Key.RegisteredName,
-                        Acres = farmGroup.Key.Acres,
-                        Count = farmGroup.Count()
-                    }).ToList();
-
-
-            return View(facilityCount);
+            return View(farms);
         }
 
         // GET: Farms/Details/5
@@ -70,7 +51,10 @@ namespace TrestlebridgeEntity.Controllers
                 return NotFound();
             }
 
-            var farm = await _context.Farms
+            var farm = await _context
+                .Farms
+                .Include(f => f.Facilities).ThenInclude(f => f.Type)
+                .Include(f => f.Facilities).ThenInclude(f => f.Animals)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (farm == null)
             {

@@ -10,7 +10,7 @@ namespace TrestlebridgeEntity.Data.Migrations
                 name: "FarmId",
                 table: "Facilities",
                 nullable: false,
-                defaultValue: 7);
+                defaultValue: 1);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Facilities_FarmId",

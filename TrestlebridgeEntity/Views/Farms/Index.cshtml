@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TrestlebridgeEntity.Models.GroupedFarm>
+﻿@model IEnumerable<TrestlebridgeEntity.Models.Farm>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,9 +18,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Acres)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Count)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -34,12 +31,9 @@
                 @Html.DisplayFor(modelItem => item.Acres)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Count)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FarmId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FarmId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FarmId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
